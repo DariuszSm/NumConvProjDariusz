@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 public class NumberConverter {
     int[] digits;
     int base;
@@ -8,9 +10,13 @@ public class NumberConverter {
      * @return A String that contains the digits inside the array in order.
      */
     public static String converterNumberAsString(int[] intArr) {
+        if (intArr == null) {
+            return "Invalid Number!";
+        }
         String assemble = "";
         for (int i = 0; i < intArr.length; i++) {
-            assemble += valueToDigit(intArr[i]);
+            String digit = valueToDigit(intArr[i]);
+            assemble += digit;
         }
         return assemble;
     }
@@ -42,7 +48,7 @@ public class NumberConverter {
         }
 
         // invalid characters are 0
-        return 0;
+        return -1;
     }
     /**
      * Provides the digit associated with a value, returns 0 if the value is invalid.
@@ -62,8 +68,22 @@ public class NumberConverter {
             return "/";
         }
 
-        // invalid characters are 0
-        return "0";
+        // invalid characters are `
+        return "`";
+    }
+
+    /**
+     * Evaluates if the stored digits form a valid number.
+     * @return Returns validity of the stored digits as a number. Returns false if the digits array is null.
+     */
+    public boolean isValidNumber() {
+        if (digits == null) {return false;}
+        for (int i = 0; i < digits.length; i++) {
+            if (digits[i] >= base) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -75,28 +95,64 @@ public class NumberConverter {
     }
 
     /**
-     * Makes an object that holds the base and the array that holds the number's individual digit values.
-     * @param number Represents the given number as an example of
+     * Inspects a String to see if the String is capable of representing a number of the given base. Great for
+     * checking for number validity prior to constructing a number.
+     * @param number The number in String form.
      * @param base
+     * @return
      */
-    public NumberConverter(String number, int base) {
-        if (number.isEmpty()) {
-            digits = new int[1];
-        } else {
-            if (base == 1) {
-                digits = new int[Integer.parseInt(number)];
-                for (int i = 0; i < digits.length; i++) {
-                    digits[i] = 1;
-                }
-            } else {
-                digits = new int[number.length()];
-                for (int i = 0; i < number.length(); i++) {
-                    int d = digitToValue(number.substring(i, i + 1));
-                    digits[i] = d;
-                }
+    public static boolean isStringValidNumber(String number, int base) {
+        for (int i = 0; i < number.length(); i++) {
+            if (digitToValue(number.substring(i, i+1)) >= base) {
+                return false;
             }
         }
+        return true;
+    }
+
+    /**
+     * Makes an object that holds the base and the array that holds the number's individual digit values.
+     * @param number Represents the given number as a String.
+     * @param base The base of the given number.
+     */
+    public NumberConverter(String number, int base) {
         this.base = base;
+
+        // validity edge case
+        if (!isStringValidNumber(number, base)) {
+            digits = null;
+            return;
+        }
+        // empty edge case
+        if (number.isEmpty()) {
+            digits = new int[1];
+            return;
+        }
+        // check for 0s at initial area of number
+        int numStart = 0;
+        while (numStart < number.length() && number.substring(numStart, numStart+1).equals("0")){
+            numStart++;
+        }
+        // if all numbers in the string are 0 (including just 1 0), just make digits a single number 0
+        if (numStart == number.length()) {
+            digits = new int[1];
+            return;
+        }
+        number = number.substring(numStart);
+
+        // primary constructor instructions
+        if (base == 1) {
+            digits = new int[Integer.parseInt(number)];
+            for (int i = 0; i < digits.length; i++) {
+                digits[i] = 1;
+            }
+        } else {
+            digits = new int[number.length()];
+            for (int i = 0; i < number.length(); i++) {
+                int d = digitToValue(number.substring(i, i + 1));
+                digits[i] = d;
+            }
+        }
     }
 
     /**
@@ -115,12 +171,18 @@ public class NumberConverter {
     /**
      * Converts the number corresponding to this object to a different base, non-destructive.
      * @param base The base to convert the object's number to.
-     * @return The int array holding the values of all the digits of the converted number.
+     * @return The int array holding the values of all the digits of the converted number. Returns null if the given array is null.
      */
     public int[] convertToBase(int base) {
+        // edge cases
+        if (digits == null) {
+            return null;
+        }
+
         if (digits[0] == 0) {
             return new int[1];
         }
+
         // convert to base 10 for simple storage as an integer variable
         int decNum = 0;
         int[] decArray;
@@ -150,6 +212,8 @@ public class NumberConverter {
 
         // split the array and assemble an array holding the values of the converted number
         String[] decStrArray = mutDecStr.split("#");
+//        System.out.println(mutDecStr);
+//        System.out.println(Arrays.toString(decStrArray));
         decArray = new int[decStrArray.length];
         for (int i = 0; i < decStrArray.length; i++) {
             decArray[i] = digitToValue(decStrArray[i]);

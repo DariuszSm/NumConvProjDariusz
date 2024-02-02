@@ -1,12 +1,13 @@
 public class AccuracyTestRunner {
     public static void main(String[] args) {
-        int rounds = 100;
+        int rounds = 1000;
         int passed = 0;
         int failed = 0;
         int roundsDone = 0;
         for (int i = 0; roundsDone < rounds; i++) {
-
-            int num = (int)(Math.random()*10000000);
+            System.out.println("Tests Completed (%/100): " + (double)roundsDone/rounds);
+            // bigger num produces longer test times for base 1 cases
+            int num = (int)(Math.random()*10000);
             int base = (int)(Math.random()*35) + 2;
             NumberConverter nc = new NumberConverter(String.valueOf(num), base);
 
@@ -36,7 +37,22 @@ public class AccuracyTestRunner {
             }
 
             // lossless conversion between bases
-            for (int f = 2; f < base; f++) {
+            for (int f = 1; f < base; f++) {
+                // edge case for base 1 numbers due to incompatibility with parseInt
+                if (f == 1) {
+                    if (nc.convertToBase(1).length == nc.getInt() || nc.convertToBase(1)[0]==nc.getInt()) {
+                        passed++;
+                    } else {
+                        failed++;
+
+                        System.out.println("Round " + (i+1) + " failed at lossless conversion between bases:");
+                        System.out.println("Num: " + num);
+                        System.out.println("Base: " + f);
+                        System.out.println();
+                    }
+                    roundsDone++;
+                    continue;
+                }
                 String newBaseString = String.valueOf(NumberConverter.converterNumberAsString(nc.convertToBase(f)));
                 NumberConverter incBaseNum = new NumberConverter(newBaseString, f);
                 int newBaseInt = incBaseNum.getInt();

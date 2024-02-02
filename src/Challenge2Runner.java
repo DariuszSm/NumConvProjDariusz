@@ -2,7 +2,7 @@ import java.util.Scanner;
 import java.util.Arrays;
 
 class Challenge2Runner {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         System.out.println("WELCOME TO THE NUMBER CONVERTER!");
         System.out.println("--------------------------------");
         System.out.print("ENTER ANY BASE 10 NUMBER!!!!!!!!!!!!!!!: ");
