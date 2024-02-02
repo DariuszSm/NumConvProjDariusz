@@ -80,10 +80,21 @@ public class NumberConverter {
      * @param base
      */
     public NumberConverter(String number, int base) {
-        digits = new int[number.length()];
-        for (int i = 0; i < number.length(); i++) {
-            int d = digitToValue(number.substring(i,i+1));
-            digits[i] = d;
+        if (number.isEmpty()) {
+            digits = new int[1];
+        } else {
+            if (base == 1) {
+                digits = new int[Integer.parseInt(number)];
+                for (int i = 0; i < digits.length; i++) {
+                    digits[i] = 1;
+                }
+            } else {
+                digits = new int[number.length()];
+                for (int i = 0; i < number.length(); i++) {
+                    int d = digitToValue(number.substring(i, i + 1));
+                    digits[i] = d;
+                }
+            }
         }
         this.base = base;
     }
@@ -107,9 +118,15 @@ public class NumberConverter {
      * @return The int array holding the values of all the digits of the converted number.
      */
     public int[] convertToBase(int base) {
+        if (digits[0] == 0) {
+            return new int[1];
+        }
         // convert to base 10 for simple storage as an integer variable
         int decNum = 0;
         int[] decArray;
+        if (this.base == 1) {
+            decNum = digits.length;
+        }
         for (int i = 0; i < digits.length; i++) {
             decNum += digits[digits.length - i - 1] * Math.pow(this.base, i);
         }
@@ -117,18 +134,24 @@ public class NumberConverter {
         // calculate individual digits, put digits within a separated string
         int mutDecNum = decNum;
         String mutDecStr = "";
-        for (int i = 0; mutDecNum/base != 0 || mutDecNum%base != 0; i++) {
-            int quotient = mutDecNum / base;
-            int remainder = mutDecNum % base;
-            mutDecStr = valueToDigit(remainder) + "#" + mutDecStr;
-            mutDecNum = quotient;
+
+        if (base == 1) {
+            for (int i = 0; i < decNum; i++) {
+                mutDecStr += "1#";
+            }
+        } else {
+            for (int i = 0; mutDecNum / base != 0 || mutDecNum % base != 0; i++) {
+                int quotient = mutDecNum / base;
+                int remainder = mutDecNum % base;
+                mutDecStr = valueToDigit(remainder) + "#" + mutDecStr;
+                mutDecNum = quotient;
+            }
         }
 
         // split the array and assemble an array holding the values of the converted number
         String[] decStrArray = mutDecStr.split("#");
         decArray = new int[decStrArray.length];
         for (int i = 0; i < decStrArray.length; i++) {
-
             decArray[i] = digitToValue(decStrArray[i]);
         }
 
