@@ -1,6 +1,7 @@
 import java.util.Arrays;
 
 public class NumberConverter {
+    String origNumber;
     int[] digits;
     int base;
 
@@ -116,6 +117,7 @@ public class NumberConverter {
      * @param base The base of the given number.
      */
     public NumberConverter(String number, int base) {
+        this.origNumber = number;
         this.base = base;
 
         // validity edge case
@@ -156,16 +158,11 @@ public class NumberConverter {
     }
 
     /**
-     * Returns the original number given to the object upon instantiates, in its original base.
+     * Returns the original number given to the object upon instantiation, in its raw String form.
      * @return The number passed to the object in its original base.
      */
     public String displayOriginalNumber() {
-        String o = "";
-        for (int i = 0; i < digits.length; i++) {
-            o = o + digits[i];
-        }
-        o = o + "\n";
-        return o;
+        return origNumber;
     }
 
     /**
