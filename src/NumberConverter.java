@@ -73,6 +73,22 @@ public class NumberConverter {
     }
 
     /**
+     * Inspects a String to see if the String is capable of representing a number of the given base. Great for
+     * checking for number validity prior to constructing a number.
+     * @param number The number in String form.
+     * @param base
+     * @return
+     */
+    public static boolean isStringValidNumber(String number, int base) {
+        for (int i = 0; i < number.length(); i++) {
+            if (digitToValue(number.substring(i, i+1)) >= base) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Evaluates if the stored digits form a valid number.
      * @return Returns validity of the stored digits as a number. Returns false if the digits array is null.
      */
@@ -92,22 +108,6 @@ public class NumberConverter {
      */
     public int[] getDigits() {
         return digits;
-    }
-
-    /**
-     * Inspects a String to see if the String is capable of representing a number of the given base. Great for
-     * checking for number validity prior to constructing a number.
-     * @param number The number in String form.
-     * @param base
-     * @return
-     */
-    public static boolean isStringValidNumber(String number, int base) {
-        for (int i = 0; i < number.length(); i++) {
-            if (digitToValue(number.substring(i, i+1)) >= base) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /**
